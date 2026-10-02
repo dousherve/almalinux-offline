@@ -1,2 +1,9 @@
 # Downloaded package mirror
 /almalinux/
+
+# Generated repository images
+*.iso
+*.iso.sha256
+
+# macOS folder metadata
+.DS_Store

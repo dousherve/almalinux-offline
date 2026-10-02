@@ -51,7 +51,7 @@ mkdir -p "$mirror_root/10"
 # Retain unfinished files and protect them from repository deletion rules.
 run_rsync() {
     local sync_status=0
-    rsync --partial-dir=.rsync-partial --exclude='.rsync-partial/' "$@" || sync_status=$?
+    rsync --partial-dir=.rsync-partial --progress --exclude='.rsync-partial/' "$@" || sync_status=$?
     if (( sync_status != 0 )); then
         printf 'Download stopped (rsync exit %s). Saved files remain in %s.\n' "$sync_status" "$mirror_root" >&2
         printf 'Rerun this script with the same destination and architecture (%s) to resume.\n' "$mirror_arch" >&2

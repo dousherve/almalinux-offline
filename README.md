@@ -72,6 +72,29 @@ sudo dnf install PACKAGE_NAME
 
 After the default setup, `dnf repolist --enabled` should show only `offline-baseos`, `offline-appstream`, `offline-extras`, and `offline-crb`. Replace `PACKAGE_NAME` with the package you need. If DNF reports a missing dependency from EPEL or a specialty repository, mirror that repository separately before retrying.
 
+## 4. Create an ISO and mount it in the VM
+
+On macOS, after the download completes, run [create-iso.zsh](create-iso.zsh):
+
+```zsh
+./create-iso.zsh
+```
+
+It packages the `almalinux/` directory into `almalinux-10-offline.iso` using UDF, and includes the client configuration script and mount instructions at the ISO root. The ISO needs approximately another 61 GiB for the current aarch64 mirror. You can pass a different mirror directory and output path as the first and second arguments. The script refuses to overwrite an existing ISO.
+
+Attach the ISO to the AlmaLinux VM's virtual CD/DVD drive. In the VM, run:
+
+```bash
+sudo mkdir -p /mnt/almalinux
+sudo mount -t udf -o ro /dev/sr0 /mnt/almalinux
+sudo bash /mnt/almalinux/configure-offline-repo.sh /mnt/almalinux
+sudo dnf repolist --enabled
+sudo dnf makecache
+sudo dnf install PACKAGE_NAME
+```
+
+Use the actual virtual optical device if it differs from `/dev/sr0`. The configuration script requires `dnf-plugins-core` as described above. Keep the ISO mounted at `/mnt/almalinux` when installing packages, and mount it there again after rebooting. The downloaded architecture must match the VM; EPEL is not included in the current mirror.
+
 ## Sources
 
 - [AlmaLinux release status](https://wiki.almalinux.org/release-notes/)
